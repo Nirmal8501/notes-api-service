@@ -2,6 +2,7 @@ package com.nirmal.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Override
 	public List<CategoryDto> getAllCategory() {
-		List<Category> categories = categoryDao.findAll();
+		List<Category> categories = categoryDao.findByIsDeletedFalse();
 		
 		List<CategoryDto> categoryList = categories.stream().map(category -> mapper.map(category, CategoryDto.class)).toList();
 		
@@ -52,9 +53,35 @@ public class CategoryServiceImpl implements CategoryService{
 
 	@Override
 	public List<CategoryResponse> getActiveCategories() {
-		List<Category> categories = categoryDao.findByIsActiveTrue();
+		List<Category> categories = categoryDao.findByIsActiveTrueAndIsDeletedFalse();
 		List<CategoryResponse> catResp = categories.stream().map(cat -> mapper.map(cat, CategoryResponse.class)).toList();
 		return catResp;
+	}
+
+	@Override
+	public CategoryDto getCategoryById(Integer id) {
+		Optional<Category> findCategoryById = categoryDao.findById(id);
+		// or if you directly want, categoryDao.findByIdAndIsDeletedFalse(id);  you can also use this as this is better
+		// as there is no unnecessary data transfer
+//		CategoryDto cat = mapper.map(category, CategoryDto.class);
+		if(findCategoryById.isPresent() && !findCategoryById.get().getIsDeleted()) {
+			Category category = findCategoryById.get();
+			return mapper.map(category, CategoryDto.class);
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean deleteCategoryById(Integer id) {
+		Optional<Category> findCategoryById = categoryDao.findById(id);
+		
+		if(findCategoryById.isPresent()) {
+			Category category = findCategoryById.get();
+			category.setIsDeleted(true);
+			categoryDao.save(category);
+			return true;
+		}
+		return false;
 	}
 
 }
