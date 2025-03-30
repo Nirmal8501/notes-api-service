@@ -32,14 +32,34 @@ public class CategoryServiceImpl implements CategoryService{
 		
 		Category category =  mapper.map(categoryDto, Category.class);
 		
-		category.setIsDeleted(false);
-		category.setCreatedBy(1);
-		category.setCreatedOn(new Date());
+		// we have implemented insert and update in this same function, if id is present we will run update else we will run save.
+		if(ObjectUtils.isEmpty(category.getId())) {
+			category.setIsDeleted(false);
+			category.setCreatedBy(1);
+			category.setCreatedOn(new Date());
+		}
+		else {
+			updateCategory(category);
+		}
+		
 		Category savedCategory =  categoryDao.save(category);
 		if(ObjectUtils.isEmpty(savedCategory)) {
 			return false;
 		}
 		return true;
+	}
+
+	
+	private void updateCategory(Category category) {
+		Optional<Category> categoryToUpdate = categoryDao.findById(category.getId());
+		if(categoryToUpdate.isPresent()) {
+			Category cat = categoryToUpdate.get();
+			category.setCreatedBy(cat.getCreatedBy());
+			category.setCreatedOn(cat.getCreatedOn());
+			category.setIsDeleted(cat.getIsDeleted());
+			category.setUpdatedBy(1);
+			category.setUpdatedOn(new Date());
+		}
 	}
 
 	@Override
