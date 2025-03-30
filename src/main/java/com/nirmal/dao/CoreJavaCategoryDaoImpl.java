@@ -25,6 +25,7 @@ public class CoreJavaCategoryDaoImpl implements CategoryDao{
 	private Connection connection;
 	private final String INSERT_CATEGORY_INTO_DB = "Insert into category (name, description, isActive) values (?,?,?)";
 	private final String GET_ALL_CATEGORIES = "Select * from category";
+	private final String GET_CATEGORY_BY_ID = "Select * from category where id=?";
 	
 	CoreJavaCategoryDaoImpl(Connection connection){
 		this.connection = connection;
@@ -62,7 +63,21 @@ public class CoreJavaCategoryDaoImpl implements CategoryDao{
 		return categories;
 	}
 	
-	
+	public Optional<Category> findCategoryById(int id) {
+		Category category = null;
+		try(PreparedStatement ps = connection.prepareStatement(GET_CATEGORY_BY_ID)){
+			ps.setInt(1,id);
+			ResultSet rs = ps.executeQuery(GET_CATEGORY_BY_ID);
+			if(rs.next()) {
+				 category = new Category();
+				//return new Category() Category(rs.getString(name)..... and so on)
+			}
+			else Optional.ofNullable(category);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
 	
 	
 	

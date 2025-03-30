@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nirmal.dto.CategoryDto;
@@ -45,4 +48,20 @@ public class CategoryController {
 		if(ObjectUtils.isEmpty(categoryList)) return ResponseEntity.noContent().build();
 		return new ResponseEntity<>(categoryList, HttpStatus.OK);
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id){
+		CategoryDto category = categoryService.getCategoryById(id);
+		if(ObjectUtils.isEmpty(category)) return new ResponseEntity<>("Category not found with id: "+id, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(category, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id){
+		Boolean deleted = categoryService.deleteCategoryById(id);
+		if(deleted) return new ResponseEntity<>("Delete Success", HttpStatus.OK);
+		return new ResponseEntity<>("Delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
 }
