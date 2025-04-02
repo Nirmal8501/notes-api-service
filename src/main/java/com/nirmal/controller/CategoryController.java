@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nirmal.dto.CategoryDto;
 import com.nirmal.dto.CategoryResponse;
+import com.nirmal.exception.ResourceNotFoundException;
 import com.nirmal.model.Category;
 import com.nirmal.service.CategoryService;
 
@@ -51,9 +52,18 @@ public class CategoryController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id){
-		CategoryDto category = categoryService.getCategoryById(id);
-		if(ObjectUtils.isEmpty(category)) return new ResponseEntity<>("Category not found with id: "+id, HttpStatus.NOT_FOUND);
-		return new ResponseEntity<>(category, HttpStatus.OK);
+		try {
+			CategoryDto category = categoryService.getCategoryById(id);
+			if(ObjectUtils.isEmpty(category)) return new ResponseEntity<>("Category not found with id: "+id, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(category, HttpStatus.OK);
+		}
+		catch(ResourceNotFoundException re) {
+			return new ResponseEntity<>(re.getMessage(), HttpStatus.NOT_FOUND);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 	
 	@DeleteMapping("/{id}")

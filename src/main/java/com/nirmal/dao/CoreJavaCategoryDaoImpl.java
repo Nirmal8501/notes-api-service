@@ -1,8 +1,10 @@
 package com.nirmal.dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,18 @@ public class CoreJavaCategoryDaoImpl implements CategoryDao{
 	private final String INSERT_CATEGORY_INTO_DB = "Insert into category (name, description, isActive) values (?,?,?)";
 	private final String GET_ALL_CATEGORIES = "Select * from category";
 	private final String GET_CATEGORY_BY_ID = "Select * from category where id=?";
+	
+//	public CoreJavaCategoryDaoImpl() {
+//        try {
+//            // Manually create a JDBC connection
+//            String url = "jdbc:mysql://localhost:3306/javanotes"; // Change DB name
+//            String user = "root";
+//            String password = "1234";
+//            this.connection = DriverManager.getConnection(url, user, password);
+//        } catch (SQLException e) {
+//            throw new RuntimeException("Failed to establish database connection", e);
+//        }
+//    }
 	
 	CoreJavaCategoryDaoImpl(Connection connection){
 		this.connection = connection;
@@ -265,6 +279,44 @@ public class CoreJavaCategoryDaoImpl implements CategoryDao{
 
 	@Override
 	public List<Category> findByIsActiveTrue() {
+		System.out.println("Inside core java findByIsActiveTrue");
+		// TODO Auto-generated method stub
+		List<Category> result = new ArrayList<>();
+		final String sqlQuery = "select * from category where is_active=true AND is_deleted=false";
+		
+		try(PreparedStatement ps = connection.prepareStatement(sqlQuery);
+		    ResultSet rs = ps.executeQuery();){
+			System.out.println("Entering while loop");
+			while(rs.next()) {
+				Category category = new Category(
+					    rs.getInt("id"), 
+					    rs.getString("name"), 
+					    rs.getString("description"),
+					    rs.getBoolean("is_active"),  
+					    rs.getBoolean("is_deleted"),  
+					    rs.getInt("created_by"),      
+					    rs.getTimestamp("created_on"),
+					    rs.getInt("updated_by"),      
+					    rs.getTimestamp("updated_on") 
+					);
+				result.add(category);
+
+			}
+			return result;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public List<Category> findByIsActiveTrueAndIsDeletedFalse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Category> findByIsDeletedFalse() {
 		// TODO Auto-generated method stub
 		return null;
 	}

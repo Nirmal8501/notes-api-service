@@ -24,6 +24,16 @@ public class Category extends BaseModel{
 	private String name;
 	private String description;
 	
+	public Category() {
+		
+	}
+	
+	public Category(Integer id, String name, String description, Boolean isActive, Boolean isDeleted, Integer createdBy, Date createdOn, Integer updatedBy, Date updatedOn) {
+	    super(isActive, isDeleted, createdBy, createdOn, updatedBy, updatedOn);  // Call BaseModel constructor
+	    this.id = id;
+	    this.name = name;
+	    this.description = description;
+	}
 	
 	public Integer getId() {
 		return id;
