@@ -8,10 +8,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
 import com.nirmal.dao.CategoryDao;
 import com.nirmal.dto.CategoryDto;
 import com.nirmal.dto.CategoryResponse;
+import com.nirmal.exception.ResourceNotFoundException;
 import com.nirmal.model.Category;
 import com.nirmal.service.CategoryService;
 
@@ -74,12 +74,14 @@ public class CategoryServiceImpl implements CategoryService{
 	@Override
 	public List<CategoryResponse> getActiveCategories() {
 		List<Category> categories = categoryDao.findByIsActiveTrueAndIsDeletedFalse();
+//		CoreJavaCategoryDaoImpl cDao = new CoreJavaCategoryDaoImpl();
+//		List<Category> categories = cDao.findByIsActiveTrue();
 		List<CategoryResponse> catResp = categories.stream().map(cat -> mapper.map(cat, CategoryResponse.class)).toList();
 		return catResp;
 	}
 
 	@Override
-	public CategoryDto getCategoryById(Integer id) {
+	public CategoryDto getCategoryById(Integer id) throws Exception {
 		Optional<Category> findCategoryById = categoryDao.findById(id);
 		// or if you directly want, categoryDao.findByIdAndIsDeletedFalse(id);  you can also use this as this is better
 		// as there is no unnecessary data transfer
@@ -88,7 +90,10 @@ public class CategoryServiceImpl implements CategoryService{
 			Category category = findCategoryById.get();
 			return mapper.map(category, CategoryDto.class);
 		}
-		return null;
+		else {
+			throw new ResourceNotFoundException("Category not found with id " + id);
+		}
+		
 	}
 
 	@Override

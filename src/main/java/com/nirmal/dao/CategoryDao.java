@@ -12,4 +12,6 @@ public interface CategoryDao extends JpaRepository<Category, Integer>{
 
 	List<Category> findByIsDeletedFalse();
 
+	List<Category> findByIsActiveTrue();
+
 }

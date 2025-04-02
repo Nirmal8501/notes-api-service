@@ -19,6 +19,21 @@ public class BaseModel {
 	private Integer updatedBy;
 	private Date updatedOn;
 	
+	public BaseModel() {
+		
+	}
+	
+	public BaseModel(Boolean isActive, Boolean isDeleted, Integer createdBy, Date createdOn, Integer updatedBy,
+			Date updatedOn) {
+		super();
+		this.isActive = isActive;
+		this.isDeleted = isDeleted;
+		this.createdBy = createdBy;
+		this.createdOn = createdOn;
+		this.updatedBy = updatedBy;
+		this.updatedOn = updatedOn;
+	}
+
 	public Boolean getIsActive() {
 		return isActive;
 	}
