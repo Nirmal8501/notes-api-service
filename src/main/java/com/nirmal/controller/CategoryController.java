@@ -23,6 +23,8 @@ import com.nirmal.exception.ResourceNotFoundException;
 import com.nirmal.model.Category;
 import com.nirmal.service.CategoryService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/category")
 public class CategoryController {
