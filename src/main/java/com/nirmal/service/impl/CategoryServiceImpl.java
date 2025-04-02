@@ -14,6 +14,7 @@ import com.nirmal.dto.CategoryResponse;
 import com.nirmal.exception.ResourceNotFoundException;
 import com.nirmal.model.Category;
 import com.nirmal.service.CategoryService;
+import com.nirmal.util.Validation;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -24,11 +25,17 @@ public class CategoryServiceImpl implements CategoryService{
 	@Autowired
 	private ModelMapper mapper;
 	
+	@Autowired
+	private Validation validation;
+	
 	@Override
 	public Boolean saveCategory(CategoryDto categoryDto) {
 //		Category category = new Category();
 //		category.setName(categoryDto.getName());
 //		// and so on for other fields...   this is manual, but we will use DtoMapper
+		
+		// Validation Checking 
+		validation.categoryValidation(categoryDto);
 		
 		Category category =  mapper.map(categoryDto, Category.class);
 		
